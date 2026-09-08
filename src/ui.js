@@ -1,0 +1,7 @@
+export const root = document.querySelector('#app');
+export const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }[char]));
+export const statusLabel = (status) => ({ pending: 'Pending', in_progress: 'In progress', waiting_parts: 'Waiting for parts', completed: 'Completed' }[status] || status);
+export const showToast = (message) => { const el = document.querySelector('#toast'); el.textContent = message; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 2500); };
+export const navigation = (active = '') => `<header class="topbar"><button class="brand" data-go="home"><span class="brand-mark">✦</span>FixFlow</button><div class="mode-switch"><button class="${active === 'tech' ? 'active' : ''}" data-go="login">Technician</button><button class="${active === 'customer' ? 'active' : ''}" data-go="lookup">Customer</button></div></header>`;
+export const closeModal = () => document.querySelector('#modal')?.remove();
+export const openModal = (title, body) => { document.body.insertAdjacentHTML('beforeend', `<div class="modal-backdrop" id="modal"><div class="modal"><h2>${title}</h2>${body}</div></div>`); document.querySelectorAll('[data-close]').forEach((b) => { b.onclick = closeModal; }); document.querySelector('#modal').onclick = (e) => { if (e.target.id === 'modal') closeModal(); }; };

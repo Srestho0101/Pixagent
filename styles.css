@@ -1,0 +1,89 @@
+:root{--ink:#172554;--muted:#64748b;--line:#dbe3ef;--bg:#f6f8fc;--card:#fff;--blue:#2563eb;--navy:#101b3d;--green:#047857;--amber:#b45309;--purple:#6d28d9;--red:#be123c;font-family:"DM Sans",sans-serif;color:var(--ink);background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh}
+button,input,textarea{font:inherit}
+button{border:0;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.shell{max-width:1160px;margin:auto;padding:24px}
+.topbar{height:62px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{font-weight:700;font-size:21px;letter-spacing:-.7px;display:flex;align-items:center;gap:9px}
+.brand-mark{height:29px;width:29px;border-radius:9px;background:linear-gradient(135deg,#38bdf8,#2563eb);box-shadow:0 5px 12px #2563eb42;display:grid;place-items:center;color:#fff;font-weight:700}
+.mode-switch{background:#e9eef8;border-radius:9px;padding:3px;display:flex;gap:2px}
+.mode-switch button{background:transparent;color:var(--muted);padding:7px 11px;border-radius:7px;font-size:13px;font-weight:600}
+.mode-switch button.active{color:var(--ink);background:#fff;box-shadow:0 1px 3px #1725541c}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center;min-height:calc(100vh - 110px);padding:40px 36px 70px}
+.eyebrow{color:var(--blue);font:600 13px "DM Mono";letter-spacing:.04em;text-transform:uppercase}
+.hero h1{font-size:clamp(42px,6vw,70px);line-height:1.03;letter-spacing:-.065em;margin:16px 0 21px}
+.hero p{color:var(--muted);font-size:18px;line-height:1.6;max-width:510px;margin:0 0 28px}
+.primary{background:var(--blue);color:#fff;border-radius:9px;padding:12px 17px;font-weight:700;box-shadow:0 7px 16px #2563eb32}
+.primary:hover{background:#1d4ed8}
+.secondary{background:#fff;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:10px 13px;font-weight:600}
+.preview{background:var(--navy);padding:22px;border-radius:18px;box-shadow:0 22px 50px #1725543d;color:#fff}
+.preview-head{display:flex;justify-content:space-between;color:#bfdbfe;font-size:13px;margin-bottom:20px}
+.mini-card{padding:15px;background:#fff;border-radius:11px;color:var(--ink);margin-top:10px}
+.mini-card div:first-child{font-weight:700}
+.mini-card small{color:var(--muted);display:block;margin-top:5px}
+.pill{font:500 11px "DM Mono";padding:4px 7px;border-radius:999px;background:#dbeafe;color:#1d4ed8}
+.screen{min-height:100vh}
+.login-wrap,.lookup-wrap{width:min(430px,100%);margin:9vh auto;padding:28px}
+.auth-card,.lookup-card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:30px;box-shadow:0 15px 35px #1725540a}
+.auth-card h1,.lookup-card h1{font-size:29px;letter-spacing:-1.2px;margin:20px 0 8px}
+.auth-card p,.lookup-card p{color:var(--muted);line-height:1.5;margin:0 0 24px}
+.field{display:grid;gap:7px;margin:15px 0}
+.field label{font-size:13px;font-weight:600}
+.field input,.field textarea{border:1px solid var(--line);border-radius:8px;padding:11px 12px;width:100%;color:var(--ink);background:#fff}
+.field textarea{resize:vertical;min-height:90px}
+.full{width:100%;margin-top:8px}
+.hint{margin-top:20px;color:var(--muted);font-size:12px;text-align:center}
+.dashboard{max-width:1160px;margin:auto;padding:20px 24px 50px}
+.dash-head{display:flex;align-items:center;justify-content:space-between;margin:31px 0 26px}
+.dash-head h1{font-size:29px;letter-spacing:-1.1px;margin:0}
+.dash-head p{margin:6px 0 0;color:var(--muted)}
+.tickets{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+.table-head,.ticket-row{display:grid;grid-template-columns:1.2fr 1.5fr .75fr .75fr 42px;gap:18px;align-items:center;padding:15px 21px}
+.table-head{color:var(--muted);font:12px "DM Mono";text-transform:uppercase;letter-spacing:.04em;background:#fafcff;border-bottom:1px solid var(--line)}
+.ticket-row{border-bottom:1px solid #edf1f7}
+.ticket-row:last-child{border:0}
+.ticket-name{font-weight:700}
+.ticket-id{font:12px "DM Mono";color:var(--muted);margin-top:3px}
+.device{color:#475569;font-size:14px}
+.status{display:inline-flex;width:max-content;align-items:center;padding:5px 8px;border-radius:999px;font:500 11px "DM Mono"}
+.pending{background:#f1f5f9;color:#475569}
+.in_progress{background:#dbeafe;color:#1d4ed8}
+.waiting_parts{background:#fef3c7;color:#92400e}
+.completed{background:#d1fae5;color:#047857}
+.icon-btn{height:31px;width:31px;background:#f1f5f9;border-radius:7px;color:var(--ink);font-size:18px}
+.empty{padding:55px;text-align:center;color:var(--muted)}
+.modal-backdrop{position:fixed;inset:0;background:#1725546e;display:grid;place-items:center;padding:18px;z-index:3}
+.modal{width:min(470px,100%);background:#fff;border-radius:14px;padding:25px;box-shadow:0 20px 60px #0f172a6b}
+.modal h2{margin:0;font-size:22px;letter-spacing:-.6px}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:21px}
+.chat-layout{max-width:840px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;padding:20px 20px 0}
+.chat-header{display:flex;align-items:center;justify-content:space-between;padding:9px 0 20px;border-bottom:1px solid var(--line)}
+.chat-title{font-weight:700}
+.chat-meta{color:var(--muted);font:12px "DM Mono";margin-top:3px}
+.chat-status{display:flex;gap:8px;align-items:center}
+.messages{flex:1;padding:32px 0 20px;display:grid;align-content:start;gap:16px}
+.message{max-width:78%;padding:12px 15px;border-radius:13px;line-height:1.45;font-size:15px}
+.agent{background:#fff;border:1px solid var(--line);border-top-left-radius:3px}
+.customer{background:var(--blue);color:#fff;margin-left:auto;border-top-right-radius:3px}
+.composer{position:sticky;bottom:0;background:linear-gradient(transparent,var(--bg) 22%);padding:25px 0 19px;display:flex;gap:9px}
+.composer input{border:1px solid var(--line);border-radius:10px;padding:13px 14px;flex:1;background:#fff}
+.send{border-radius:10px;padding:0 17px;background:var(--blue);color:white;font-weight:700}
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:#172554;color:#fff;padding:11px 15px;border-radius:8px;font-size:14px;opacity:0;transition:.2s;pointer-events:none}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:700px){.hero{grid-template-columns:1fr;padding:25px 3px}
+.preview{display:none}
+.shell{padding:17px}
+.mode-switch button{padding:7px}
+.dashboard{padding:12px}
+.table-head{display:none}
+.ticket-row{grid-template-columns:1fr auto;gap:9px;padding:15px}
+.ticket-row .device,.ticket-row .tech{display:none}
+.ticket-row .status{grid-column:1}
+.ticket-row .icon-btn{grid-column:2;grid-row:1/3}
+.dash-head{align-items:flex-end}
+.dash-head h1{font-size:25px}
+.chat-layout{padding:13px}
+.message{max-width:90%}
+}
