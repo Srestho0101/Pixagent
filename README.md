@@ -11,11 +11,11 @@ FixFlow is a vanilla-JS repair-shop frontend backed by FastAPI, Supabase Postgre
    .venv/bin/python scripts/create_password_hash.py
    ```
 
-3. Insert the resulting hash in the SQL editor:
+3. Copy the complete hash printed by the helper—not the literal `$2b$...` placeholder—and insert it in the SQL editor. Use the same email and password when logging in:
 
    ```sql
    insert into public.technicians (email, name, password_hash)
-   values ('tech@fixflow.test', 'FixFlow Technician', '$2b$...');
+   values ('tech@fixflow.test', 'FixFlow Technician', 'PASTE_THE_COMPLETE_BCRYPT_HASH_HERE');
    ```
 
 The migration enables RLS and revokes browser roles. The API must therefore use a server-only Supabase secret key (`sb_secret_...`) or legacy `service_role` key—never a publishable/anon key.
@@ -36,19 +36,31 @@ Set `FRONTEND_ORIGINS` to the exact local and deployed frontend URLs. For a depl
 
 ## Run locally
 
+Start the backend in one terminal:
+
 ```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
 .venv/bin/uvicorn backend.main:app --reload
 ```
 
-Serve the project root with any static server, for example:
+The API runs at `http://localhost:8000`. Verify it with:
+
+```bash
+curl http://localhost:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+In a second terminal, serve the frontend on a different port:
 
 ```bash
 python3 -m http.server 5500
 ```
 
-Then visit `http://localhost:5500`. The API health check is at `http://localhost:8000/health`.
+Then visit `http://localhost:5500`. Do not use port `8000` for the static frontend; that port is reserved for FastAPI.
 
 ## API
 

@@ -148,7 +148,15 @@ async def health() -> dict[str, str]:
 async def login(payload: LoginInput) -> dict[str, Any]:
     email = payload.email.strip().lower()
     rows = await db.request("GET", "technicians", params={"select": "id,email,name,password_hash", "email": f"eq.{email}", "limit": "1"})
-    if not rows or not bcrypt.checkpw(payload.password.encode(), rows[0]["password_hash"].encode()):
+    if not rows:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+    try:
+        password_matches = bcrypt.checkpw(payload.password.encode(), rows[0]["password_hash"].encode())
+    except (ValueError, TypeError):
+        # Do not expose storage details to the client, but avoid turning a
+        # malformed seed row into an opaque 500 response.
+        password_matches = False
+    if not password_matches:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
     technician = rows[0]
     return {"access_token": create_access_token(technician), "token_type": "bearer", "technician": {"id": technician["id"], "email": technician["email"], "name": technician["name"]}}
