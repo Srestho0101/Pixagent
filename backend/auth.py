@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 
@@ -43,18 +43,24 @@ def verify_token(token: str) -> dict:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-def get_current_technician(credentials: HTTPAuthorizationCredentials = None):
+async def get_current_technician(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Dependency to get current technician from JWT token"""
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Not authenticated",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    payload = verify_token(credentials.credentials)
+    
+    token = credentials.credentials
+    payload = verify_token(token)
     technician_id = payload.get("sub")
+    
     if technician_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid token payload",
+            headers={"WWW-Authenticate": "Bearer"},
         )
+    
     return int(technician_id)

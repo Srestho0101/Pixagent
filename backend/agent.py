@@ -1,8 +1,8 @@
 import os
 import json
 from typing import List, Dict, Any
-from mistralai import Mistral
-from backend.database import db
+from mistralai.client import Mistral
+from database import db
 from dotenv import load_dotenv
 
 load_dotenv()

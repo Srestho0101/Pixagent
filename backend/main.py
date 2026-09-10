@@ -1,14 +1,14 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from typing import List
+from typing import List, Optional
 import json
 import os
 from dotenv import load_dotenv
 import asyncio
 
-from backend.database import db
-from backend.schemas import (
+from database import db
+from schemas import (
     LoginRequest, LoginResponse, TicketCreate, TicketResponse,
     LogCreate, LogResponse, ChatRequest
 )
@@ -23,7 +23,7 @@ load_dotenv()
 app = FastAPI(title="Laptop Repair Shop AI Agent System")
 
 # CORS configuration
-frontend_origins = os.getenv("FRONTEND_ORIGINS", "http://localhost:5500,http://127.0.0.1:5500").split(",")
+frontend_origins = os.getenv("FRONTEND_ORIGINS", "http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000,http://127.0.0.1:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=frontend_origins,
@@ -72,6 +72,7 @@ async def login(login_data: LoginRequest):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Login error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Login error: {str(e)}"
@@ -92,7 +93,9 @@ async def create_ticket(
         }).execute()
         
         if result.data:
-            return result.data[0]
+            ticket = result.data[0]
+            ticket["logs"] = []
+            return ticket
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -101,6 +104,7 @@ async def create_ticket(
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Error creating ticket: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error creating ticket: {str(e)}"
@@ -116,13 +120,18 @@ async def get_my_tickets(technician_id: int = Depends(get_current_technician)):
             # Fetch logs for each ticket
             tickets_with_logs = []
             for ticket in result.data:
-                logs_result = db.get_client().table("repair_logs").select("*").eq("ticket_id", ticket["id"]).order("created_at", desc=True).limit(3).execute()
-                ticket["logs"] = logs_result.data if logs_result.data else []
+                try:
+                    logs_result = db.get_client().table("repair_logs").select("*").eq("ticket_id", ticket["id"]).order("created_at", desc=True).limit(3).execute()
+                    ticket["logs"] = logs_result.data if logs_result.data else []
+                except Exception as log_error:
+                    print(f"Error fetching logs for ticket {ticket['id']}: {log_error}")
+                    ticket["logs"] = []
                 tickets_with_logs.append(ticket)
             return tickets_with_logs
         
         return []
     except Exception as e:
+        print(f"Error fetching tickets: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error fetching tickets: {str(e)}"
@@ -135,7 +144,7 @@ async def add_log(
 ):
     """Add a technician note to a ticket"""
     try:
-        # Verify ticket belongs to technician or exists
+        # Verify ticket exists
         ticket_result = db.get_client().table("tickets").select("*").eq("id", log_data.ticket_id).execute()
         
         if not ticket_result.data:
@@ -161,6 +170,7 @@ async def add_log(
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Error adding log: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Error adding log: {str(e)}"
@@ -181,20 +191,27 @@ async def chat(chat_request: ChatRequest):
             return StreamingResponse(generate_error(), media_type="text/event-stream")
         
         async def generate():
-            # Get AI response
-            response = await agent.chat(
-                ticket_id=chat_request.ticket_id,
-                message=chat_request.message,
-                history=chat_request.history
-            )
-            
-            # Stream the response
-            yield f"data: {json.dumps({'content': response})}\n\n"
-            yield "data: [DONE]\n\n"
+            try:
+                # Get AI response
+                response = await agent.chat(
+                    ticket_id=chat_request.ticket_id,
+                    message=chat_request.message,
+                    history=chat_request.history
+                )
+                
+                # Stream the response
+                yield f"data: {json.dumps({'content': response})}\n\n"
+                yield "data: [DONE]\n\n"
+            except Exception as e:
+                print(f"Error in chat generation: {e}")
+                error_msg = "I'm sorry, but I'm having trouble accessing the repair information right now. Please try again later."
+                yield f"data: {json.dumps({'content': error_msg})}\n\n"
+                yield "data: [DONE]\n\n"
         
         return StreamingResponse(generate(), media_type="text/event-stream")
         
     except Exception as e:
+        print(f"Chat endpoint error: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Chat error: {str(e)}"
@@ -203,9 +220,17 @@ async def chat(chat_request: ChatRequest):
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint"""
+    try:
+        # Test database connection
+        test_result = db.get_client().table("technicians").select("id").limit(1).execute()
+        db_status = "connected" if test_result else "error"
+    except Exception as e:
+        print(f"Health check DB error: {e}")
+        db_status = "disconnected"
+    
     return {
         "status": "healthy",
-        "database": "connected" if db.client else "disconnected",
+        "database": db_status,
         "agent": "ready" if agent.client else "not ready"
     }
 
