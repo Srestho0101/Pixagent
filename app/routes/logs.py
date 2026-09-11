@@ -11,14 +11,16 @@ router = APIRouter()
 @router.post("/logs")
 def create_log(
     data: CreateLogRequest,
-    technician_id: str = Depends(get_current_technician),
+    technician_id: str = Depends(
+        get_current_technician
+    ),
 ):
 
     with get_connection() as conn:
         with conn.cursor() as cur:
 
-            # Make sure this ticket belongs to the
-            # authenticated technician.
+            # First make sure this ticket belongs
+            # to the logged-in technician.
             cur.execute(
                 """
                 SELECT id
@@ -27,7 +29,7 @@ def create_log(
                   AND technician_id = %s
                 """,
                 (
-                    str(data.ticket_id),
+                    data.ticket_id,
                     technician_id,
                 ),
             )
@@ -40,6 +42,8 @@ def create_log(
                     detail="Ticket not found"
                 )
 
+            # Ticket belongs to the technician,
+            # so insert the repair log.
             cur.execute(
                 """
                 INSERT INTO repair_logs (
@@ -56,7 +60,7 @@ def create_log(
                     created_at
                 """,
                 (
-                    str(data.ticket_id),
+                    data.ticket_id,
                     technician_id,
                     data.note,
                 ),

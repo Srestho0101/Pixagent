@@ -25,3 +25,8 @@ class TicketResponse(BaseModel):
     status: str
     technician_id: int
     created_at: datetime
+
+
+class CreateLogRequest(BaseModel):
+    ticket_id: int
+    note: str
