@@ -1,0 +1,44 @@
+from fastapi import FastAPI
+
+from app.routes import auth, tickets
+
+
+app = FastAPI(
+    title="Laptop Repair Shop API",
+    version="1.0.0"
+)
+
+
+app.include_router(
+    auth.router,
+    prefix="/api"
+)
+
+app.include_router(
+    tickets.router,
+    prefix="/api"
+)
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "Laptop Repair Shop API"
+    }
+
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok"
+    }
+
+@app.get("/api/me")
+def get_me(
+    technician_id: str = Depends(
+        get_current_technician
+    )
+):
+    return {
+        "technician_id": technician_id
+    }
