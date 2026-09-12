@@ -22,14 +22,27 @@
           </span>
         </a>
 
-        <nav class="main-nav" aria-label="Main navigation">
-          <button class="nav-button active" type="button" data-view="technician-view">
-            Technician portal
+        <div class="header-actions">
+          <button
+            id="theme-toggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Switch to dark mode"
+            title="Switch to dark mode"
+          >
+            <span class="theme-icon" aria-hidden="true">☾</span>
+            <span class="theme-label">Dark mode</span>
           </button>
-          <button class="nav-button" type="button" data-view="customer-view">
-            Track a repair
-          </button>
-        </nav>
+
+          <nav class="main-nav" aria-label="Main navigation">
+            <button class="nav-button active" type="button" data-view="technician-view">
+              Technician portal
+            </button>
+            <button class="nav-button" type="button" data-view="customer-view">
+              Track a repair
+            </button>
+          </nav>
+        </div>
       </header>
 
       <main id="top">

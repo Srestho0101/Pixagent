@@ -1,5 +1,6 @@
 const API_BASE_URL = (window.PIXEL_BOT_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
 const TOKEN_STORAGE_KEY = "pixel-repair-technician-token";
+const THEME_STORAGE_KEY = "pixel-repair-theme";
 
 const state = {
   selectedTicketId: null,
@@ -8,6 +9,9 @@ const state = {
 const elements = {
   navButtons: document.querySelectorAll("[data-view]"),
   views: document.querySelectorAll(".view"),
+  themeToggle: document.querySelector("#theme-toggle"),
+  themeIcon: document.querySelector(".theme-icon"),
+  themeLabel: document.querySelector(".theme-label"),
   loginPanel: document.querySelector("#login-panel"),
   dashboardPanel: document.querySelector("#dashboard-panel"),
   loginForm: document.querySelector("#login-form"),
@@ -32,6 +36,26 @@ const elements = {
   logMessage: document.querySelector("#log-message"),
   closeLogDialog: document.querySelector("#close-log-dialog"),
 };
+
+function getPreferredTheme() {
+  const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (storedTheme === "light" || storedTheme === "dark") return storedTheme;
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function applyTheme(theme, persist = false) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  elements.themeToggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+  elements.themeToggle.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
+  elements.themeIcon.textContent = isDark ? "☀" : "☾";
+  elements.themeLabel.textContent = isDark ? "Light mode" : "Dark mode";
+
+  if (persist) {
+    window.localStorage.setItem(THEME_STORAGE_KEY, isDark ? "dark" : "light");
+  }
+}
 
 function getToken() {
   return window.localStorage.getItem(TOKEN_STORAGE_KEY);
@@ -378,6 +402,12 @@ async function handleCustomerLookup(event) {
 
 elements.navButtons.forEach((button) => {
   button.addEventListener("click", () => showView(button.dataset.view));
+});
+
+applyTheme(getPreferredTheme());
+elements.themeToggle.addEventListener("click", () => {
+  const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(nextTheme, true);
 });
 
 elements.loginForm.addEventListener("submit", handleLogin);

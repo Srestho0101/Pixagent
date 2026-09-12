@@ -10,8 +10,42 @@
   --coral: #dc755c;
   --coral-soft: #fce9df;
   --yellow: #f0bc54;
+  --header-bg: rgba(255, 255, 255, 0.62);
+  --input-bg: #fbfcfa;
+  --card-bg: #fbfcfa;
+  --control-bg: #f0f4f1;
   --shadow: 0 22px 55px rgba(25, 55, 58, 0.08);
   --radius: 20px;
+}
+
+:root[data-theme="dark"] {
+  --ink: #e8f1ed;
+  --muted: #a7bbb5;
+  --paper: #101b1d;
+  --surface: #17282a;
+  --line: #2c4544;
+  --teal: #278779;
+  --teal-dark: #a3e4d2;
+  --teal-soft: #1d3b38;
+  --coral: #ef987f;
+  --coral-soft: #482e2a;
+  --yellow: #f4c968;
+  --header-bg: rgba(23, 40, 42, 0.82);
+  --input-bg: #122224;
+  --card-bg: #142426;
+  --control-bg: #203536;
+  --shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .status-badge.waiting_parts,
+:root[data-theme="dark"] .status-badge.pending {
+  color: #f4c968;
+  background: #49391e;
+}
+
+:root[data-theme="dark"] .status-badge.completed {
+  color: #a7dfb0;
+  background: #203d2d;
 }
 
 * {
@@ -67,6 +101,13 @@ textarea:focus-visible {
   padding: 28px 0 34px;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -110,7 +151,32 @@ textarea:focus-visible {
   padding: 4px;
   border: 1px solid var(--line);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.62);
+  background: var(--header-bg);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-height: 37px;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 11px;
+  color: var(--muted);
+  background: var(--header-bg);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.theme-toggle:hover {
+  color: var(--ink);
+  border-color: var(--teal);
+}
+
+.theme-icon {
+  color: var(--yellow);
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .nav-button {
@@ -254,7 +320,7 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 11px;
   color: var(--ink);
-  background: #fbfcfa;
+  background: var(--input-bg);
   font-size: 0.92rem;
   transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
@@ -423,7 +489,7 @@ textarea:focus {
   padding: 17px;
   border: 1px solid var(--line);
   border-radius: 14px;
-  background: #fbfcfa;
+  background: var(--card-bg);
 }
 
 .ticket-card h3 {
@@ -646,7 +712,7 @@ textarea:focus {
   border: 0;
   border-radius: 50%;
   color: var(--muted);
-  background: #f0f4f1;
+  background: var(--control-bg);
   font-size: 1.2rem;
   line-height: 1;
 }
@@ -691,6 +757,16 @@ textarea:focus {
     align-items: flex-start;
     flex-direction: column;
     padding-bottom: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .theme-toggle {
+    align-self: flex-end;
   }
 
   .main-nav {
