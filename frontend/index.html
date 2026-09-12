@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Pixel Repair Shop technician dashboard and customer repair tracking"
+    />
+    <title>Pixel IT</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <a class="brand" href="#top" aria-label="Pixel Repair Shop home">
+          <span class="brand-mark" aria-hidden="true">P</span>
+          <span>
+            <strong>Pixel IT</strong>
+            <small>Repairs, tracked clearly.</small>
+          </span>
+        </a>
+
+        <nav class="main-nav" aria-label="Main navigation">
+          <button class="nav-button active" type="button" data-view="technician-view">
+            Technician portal
+          </button>
+          <button class="nav-button" type="button" data-view="customer-view">
+            Track a repair
+          </button>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="view active" id="technician-view" aria-labelledby="technician-title">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow">Internal workspace</p>
+              <h1 id="technician-title">Keep every repair moving.</h1>
+              <p class="lede">
+                Create tickets, see your queue, and leave clear progress notes for customers.
+              </p>
+            </div>
+            <div class="heading-accent" aria-hidden="true"></div>
+          </div>
+
+          <div id="login-panel" class="panel narrow-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Technician sign in</p>
+                <h2>Welcome back</h2>
+              </div>
+              <span class="status-dot" aria-hidden="true"></span>
+            </div>
+
+            <form id="login-form" class="stack-form">
+              <label for="login-email">Email address</label>
+              <input id="login-email" name="email" type="email" autocomplete="email" required />
+
+              <label for="login-password">Password</label>
+              <input
+                id="login-password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+              />
+
+              <button class="button primary-button" type="submit">
+                <span class="button-label">Sign in</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+              <p class="form-message" id="login-message" role="alert"></p>
+            </form>
+          </div>
+
+          <section id="dashboard-panel" class="dashboard hidden" aria-live="polite">
+            <div class="dashboard-toolbar">
+              <div>
+                <p class="eyebrow">Technician dashboard</p>
+                <h2>Your repair queue</h2>
+              </div>
+              <button id="logout-button" class="button ghost-button" type="button">Sign out</button>
+            </div>
+
+            <div class="dashboard-grid">
+              <section class="panel create-panel" aria-labelledby="new-ticket-title">
+                <div class="panel-heading">
+                  <div>
+                    <p class="eyebrow">Start a repair</p>
+                    <h2 id="new-ticket-title">New ticket</h2>
+                  </div>
+                  <span class="panel-number">01</span>
+                </div>
+
+                <form id="ticket-form" class="stack-form">
+                  <label for="customer-name">Customer name</label>
+                  <input id="customer-name" name="customer_name" type="text" required maxlength="120" />
+
+                  <label for="device-info">Device and issue</label>
+                  <textarea
+                    id="device-info"
+                    name="device_info"
+                    rows="4"
+                    maxlength="500"
+                    placeholder="MacBook Pro 14-inch — keyboard not responding"
+                    required
+                  ></textarea>
+
+                  <button class="button primary-button" type="submit">
+                    <span class="button-label">Create ticket</span>
+                    <span class="spinner" aria-hidden="true"></span>
+                  </button>
+                  <p class="form-message" id="ticket-message" role="alert"></p>
+                </form>
+              </section>
+
+              <section class="panel tickets-panel" aria-labelledby="tickets-title">
+                <div class="panel-heading">
+                  <div>
+                    <p class="eyebrow">Active work</p>
+                    <h2 id="tickets-title">Your tickets</h2>
+                  </div>
+                  <button id="refresh-tickets" class="icon-button" type="button" aria-label="Refresh tickets" title="Refresh tickets">
+                    ↻
+                  </button>
+                </div>
+
+                <div id="tickets-message" class="inline-message" role="status"></div>
+                <div id="ticket-list" class="ticket-list"></div>
+              </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="view" id="customer-view" aria-labelledby="customer-title" hidden>
+          <div class="page-heading customer-heading">
+            <div>
+              <p class="eyebrow">Customer tracking</p>
+              <h1 id="customer-title">See where your repair stands.</h1>
+              <p class="lede">
+                Enter the ticket number from your repair receipt to see the latest update.
+              </p>
+            </div>
+            <div class="heading-accent warm" aria-hidden="true"></div>
+          </div>
+
+          <div class="customer-layout">
+            <section class="panel lookup-panel" aria-labelledby="lookup-title">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Repair lookup</p>
+                  <h2 id="lookup-title">Your ticket number</h2>
+                </div>
+                <span class="panel-number">01</span>
+              </div>
+
+              <form id="lookup-form" class="lookup-form">
+                <label for="ticket-id">Ticket ID</label>
+                <div class="input-action-row">
+                  <input
+                    id="ticket-id"
+                    name="ticket_id"
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="e.g. 104"
+                    required
+                  />
+                  <button class="button primary-button" type="submit">
+                    <span class="button-label">View update</span>
+                    <span class="spinner" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <p class="form-message" id="lookup-message" role="alert"></p>
+              </form>
+            </section>
+
+            <section id="customer-result" class="customer-result hidden" aria-live="polite">
+              <div class="result-summary panel">
+                <div>
+                  <p class="eyebrow">Ticket <span id="result-ticket-id">—</span></p>
+                  <h2 id="result-title">Repair updates</h2>
+                </div>
+                <span id="result-status" class="status-badge">—</span>
+              </div>
+              <div class="panel log-panel">
+                <div class="panel-heading compact-heading">
+                  <div>
+                    <p class="eyebrow">Technician notes</p>
+                    <h2>Repair history</h2>
+                  </div>
+                </div>
+                <div id="customer-log-list" class="customer-log-list"></div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <span>Pixel IT</span>
+        <span>Clear updates. Better repairs.</span>
+      </footer>
+    </div>
+
+    <dialog id="log-dialog" class="log-dialog">
+      <form id="log-form" class="stack-form" method="dialog">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Ticket <span id="log-ticket-id">—</span></p>
+            <h2>Add progress note</h2>
+          </div>
+          <button id="close-log-dialog" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+        <label for="log-note">What changed?</label>
+        <textarea
+          id="log-note"
+          name="note"
+          rows="5"
+          maxlength="1000"
+          placeholder="Inspected the charging circuit and ordered a replacement part."
+          required
+        ></textarea>
+        <button class="button primary-button" type="submit">
+          <span class="button-label">Save note</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <p class="form-message" id="log-message" role="alert"></p>
+      </form>
+    </dialog>
+  </body>
+</html>

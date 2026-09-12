@@ -30,3 +30,16 @@ class TicketResponse(BaseModel):
 class CreateLogRequest(BaseModel):
     ticket_id: int
     note: str
+
+
+class CustomerLogResponse(BaseModel):
+    id: int
+    ticket_id: int
+    note: str
+    created_at: datetime
+
+
+class CustomerTicketLogsResponse(BaseModel):
+    ticket_id: int
+    status: str
+    logs: list[CustomerLogResponse]

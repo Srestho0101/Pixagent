@@ -46,7 +46,7 @@ repair_logs (id, ticket_id, technician_id, note, created_at)
 
 ---
 
-## 5. API Endpoints (5 Total)
+## 5. API Endpoints (6 Total)
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
@@ -54,6 +54,7 @@ repair_logs (id, ticket_id, technician_id, note, created_at)
 | POST | `/api/tickets` | Create new repair ticket |
 | GET | `/api/tickets/my` | List technician's tickets |
 | POST | `/api/logs` | Add technician note |
+| GET | `/api/tickets/{ticket_id}/logs` | Customer views repair status and logs |
 | POST | `/api/chat` | Customer AI chat (streaming) |
 
 ---
