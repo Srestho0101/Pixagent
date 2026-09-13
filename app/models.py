@@ -60,9 +60,15 @@ class CustomerTicketLogsResponse(BaseModel):
     logs: list[CustomerLogResponse]
 
 
+class ChatHistoryMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=2000)
+
+
 class ChatRequest(BaseModel):
     ticket_id: int | None = Field(default=None, ge=1)
     message: str = Field(min_length=1, max_length=2000)
+    history: list[ChatHistoryMessage] = Field(default_factory=list, max_length=10)
 
 
 class DeleteResponse(BaseModel):

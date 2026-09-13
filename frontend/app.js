@@ -8,6 +8,7 @@ const state = {
   editingTicketId: null,
   historyTicketId: null,
   chatStarted: false,
+  chatHistory: [],
 };
 
 const elements = {
@@ -69,13 +70,26 @@ function getSessionTicketId() {
 }
 
 function saveSessionTicketId(ticketId) {
+  const previousTicketId = getSessionTicketId();
   window.sessionStorage.setItem(TICKET_SESSION_KEY, String(ticketId));
+  if (previousTicketId !== ticketId) resetChatConversation();
   updateChatContext();
 }
 
 function clearSessionTicketId() {
+  const hadTicket = getSessionTicketId() !== null;
   window.sessionStorage.removeItem(TICKET_SESSION_KEY);
+  if (hadTicket) resetChatConversation();
   updateChatContext();
+}
+
+function resetChatConversation() {
+  state.chatHistory = [];
+  state.chatStarted = false;
+  if (elements.chatMessages) elements.chatMessages.replaceChildren();
+  if (elements.chatWidget && !elements.chatWidget.classList.contains("hidden")) {
+    openChatWidget();
+  }
 }
 
 function updateChatContext() {
@@ -673,6 +687,7 @@ function handleChatStreamEvent(rawEvent, assistantBubble) {
 
   const payload = JSON.parse(data);
   if (payload.error) {
+    assistantBubble.dataset.error = "true";
     assistantBubble.textContent = payload.error;
     setMessage(elements.chatMessage, payload.error, "error");
     return false;
@@ -706,6 +721,7 @@ async function handleChat(event) {
       body: JSON.stringify({
         ticket_id: getSessionTicketId(),
         message,
+        history: state.chatHistory.slice(-10),
       }),
     });
 
@@ -742,6 +758,14 @@ async function handleChat(event) {
     if (buffer.trim()) handleChatStreamEvent(buffer, assistantBubble);
     if (!assistantBubble.textContent) {
       assistantBubble.textContent = "I don't have an update for that yet.";
+    }
+
+    if (assistantBubble.dataset.error !== "true") {
+      state.chatHistory.push(
+        { role: "user", content: message },
+        { role: "assistant", content: assistantBubble.textContent },
+      );
+      state.chatHistory = state.chatHistory.slice(-10);
     }
   } catch (error) {
     assistantBubble.textContent = error.message;
