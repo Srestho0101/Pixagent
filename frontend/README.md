@@ -18,4 +18,4 @@ python -m http.server 5500 --directory frontend
 
 Open <http://localhost:5500>.
 
-The frontend defaults to `http://localhost:8000/api`. To point it at another backend, define `window.PIXEL_BOT_API_URL` before loading `app.js`.
+The frontend defaults to `https://pixagent.vercel.app/api`. To point it at another backend, define `window.PIXEL_BOT_API_URL` before loading `app.js`.
