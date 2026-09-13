@@ -13,7 +13,7 @@ class Settings:
         origin.strip()
         for origin in os.getenv(
             "FRONTEND_ORIGINS",
-            ""
+            "http://localhost:5500,http://127.0.0.1:5500,https://srestho0101.github.io"
         ).split(",")
         if origin.strip()
     ]
