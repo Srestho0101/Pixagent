@@ -1,4 +1,4 @@
-const API_BASE_URL = (window.PIXEL_BOT_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
+const API_BASE_URL = (window.PIXEL_BOT_API_URL || "https://pixagent.vercel.app/api").replace(/\/$/, "");
 const TOKEN_STORAGE_KEY = "pixel-repair-technician-token";
 const THEME_STORAGE_KEY = "pixel-repair-theme";
 const TICKET_SESSION_KEY = "pixel-repair-customer-ticket";
