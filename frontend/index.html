@@ -213,13 +213,98 @@
         </section>
       </main>
 
+      <button
+        id="ai-chat-toggle"
+        class="ai-chat-toggle"
+        type="button"
+        aria-controls="ai-chat-widget"
+        aria-expanded="false"
+        aria-label="Open repair assistant"
+        title="Ask the repair assistant"
+      >
+        <span aria-hidden="true">✦</span>
+      </button>
+
+      <aside id="ai-chat-widget" class="ai-chat-widget hidden" aria-label="Repair assistant">
+        <div class="ai-chat-header">
+          <div>
+            <p class="eyebrow">Pixel assistant</p>
+            <h2>Ask about your repair</h2>
+          </div>
+          <button id="ai-chat-close" class="close-button" type="button" aria-label="Close repair assistant">×</button>
+        </div>
+        <p id="ai-chat-context" class="ai-chat-context" role="status"></p>
+        <div id="ai-chat-messages" class="ai-chat-messages" aria-live="polite"></div>
+        <form id="ai-chat-form" class="ai-chat-form">
+          <label class="sr-only" for="ai-chat-input">Message the repair assistant</label>
+          <textarea
+            id="ai-chat-input"
+            rows="2"
+            maxlength="2000"
+            placeholder="Ask for the latest repair update..."
+            required
+          ></textarea>
+          <button class="button primary-button" type="submit">
+            <span class="button-label">Send</span>
+            <span class="spinner" aria-hidden="true"></span>
+          </button>
+          <p id="ai-chat-message" class="form-message" role="alert"></p>
+        </form>
+      </aside>
+
       <footer class="site-footer">
         <span>Pixel IT</span>
         <span>Clear updates. Better repairs.</span>
       </footer>
     </div>
 
-    <dialog id="log-dialog" class="log-dialog">
+    <dialog id="edit-dialog" class="app-dialog">
+      <form id="edit-form" class="stack-form" method="dialog">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Ticket <span id="edit-ticket-id">—</span></p>
+            <h2>Edit ticket</h2>
+          </div>
+          <button id="close-edit-dialog" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+
+        <label for="edit-customer-name">Customer name</label>
+        <input id="edit-customer-name" name="customer_name" type="text" maxlength="120" required />
+
+        <label for="edit-device-info">Device and issue</label>
+        <textarea id="edit-device-info" name="device_info" rows="4" maxlength="500" required></textarea>
+
+        <label for="edit-status">Repair status</label>
+        <select id="edit-status" name="status" required>
+          <option value="pending">Pending</option>
+          <option value="in_progress">In progress</option>
+          <option value="waiting_parts">Waiting for parts</option>
+          <option value="completed">Completed</option>
+        </select>
+
+        <button class="button primary-button" type="submit">
+          <span class="button-label">Save changes</span>
+          <span class="spinner" aria-hidden="true"></span>
+        </button>
+        <p class="form-message" id="edit-message" role="alert"></p>
+      </form>
+    </dialog>
+
+    <dialog id="history-dialog" class="app-dialog">
+      <div class="dialog-content">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Ticket <span id="history-ticket-id">—</span></p>
+            <h2>Repair history</h2>
+          </div>
+          <button id="close-history-dialog" class="close-button" type="button" aria-label="Close">×</button>
+        </div>
+        <p id="history-message" class="inline-message" role="status"></p>
+        <div id="history-list" class="history-list"></div>
+      </div>
+    </dialog>
+
+    <dialog id="log-dialog" class="app-dialog">
       <form id="log-form" class="stack-form" method="dialog">
         <div class="panel-heading">
           <div>

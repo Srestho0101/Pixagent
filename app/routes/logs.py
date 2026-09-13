@@ -6,6 +6,7 @@ from app.models import (
     CreateLogRequest,
     CustomerLogResponse,
     CustomerTicketLogsResponse,
+    DeleteResponse,
 )
 
 
@@ -134,4 +135,43 @@ def create_log(
         "technician_id": log[2],
         "note": log[3],
         "created_at": log[4],
+    }
+
+
+@router.delete(
+    "/logs/{log_id}",
+    response_model=DeleteResponse,
+)
+def delete_log(
+    log_id: int,
+    technician_id: str = Depends(
+        get_current_technician
+    ),
+):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                DELETE FROM repair_logs AS l
+                USING tickets AS t
+                WHERE l.id = %s
+                  AND l.ticket_id = t.id
+                  AND t.technician_id = %s
+                RETURNING l.id
+                """,
+                (log_id, technician_id),
+            )
+
+            deleted_log = cur.fetchone()
+
+        if not deleted_log:
+            raise HTTPException(
+                status_code=404,
+                detail="Log not found",
+            )
+
+        conn.commit()
+
+    return {
+        "message": f"Log {log_id} deleted",
     }

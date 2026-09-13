@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routes import auth, tickets, logs
+from app.routes import auth, tickets, logs, chat
 
 from fastapi import Depends
 
@@ -36,6 +36,11 @@ app.include_router(
 
 app.include_router(
     logs.router,
+    prefix="/api"
+)
+
+app.include_router(
+    chat.router,
     prefix="/api"
 )
 

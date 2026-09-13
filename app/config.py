@@ -6,6 +6,8 @@ load_dotenv()
 
 class Settings:
     JWT_SECRET = os.getenv("JWT_SECRET")
+    MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+    MISTRAL_MODEL = os.getenv("MISTRAL_MODEL", "mistral-small-latest")
 
     FRONTEND_ORIGINS = [
         origin.strip()

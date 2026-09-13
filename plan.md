@@ -46,14 +46,17 @@ repair_logs (id, ticket_id, technician_id, note, created_at)
 
 ---
 
-## 5. API Endpoints (6 Total)
+## 5. API Endpoints (9 Total)
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
 | POST | `/api/login` | Technician login → JWT token |
 | POST | `/api/tickets` | Create new repair ticket |
 | GET | `/api/tickets/my` | List technician's tickets |
+| PATCH | `/api/tickets/{ticket_id}` | Edit an owned ticket |
+| DELETE | `/api/tickets/{ticket_id}` | Delete an owned ticket and its logs |
 | POST | `/api/logs` | Add technician note |
+| DELETE | `/api/logs/{log_id}` | Delete an owned repair log |
 | GET | `/api/tickets/{ticket_id}/logs` | Customer views repair status and logs |
 | POST | `/api/chat` | Customer AI chat (streaming) |
 
