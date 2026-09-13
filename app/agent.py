@@ -11,6 +11,39 @@ from app.database import get_connection
 MISTRAL_URL = "https://api.mistral.ai/v1/chat/completions"
 MAX_LOGS = 5
 
+
+class MistralRateLimitError(RuntimeError):
+    """Raised when Mistral asks us to slow down or has exhausted the quota."""
+
+
+def _is_greeting(message: str) -> bool:
+    normalized = message.strip().lower().strip("!.,? ")
+    return normalized in {"hi", "hello", "hey", "hiya", "good morning", "good afternoon"}
+
+
+def _fallback_response(context: dict[str, Any], user_message: str) -> str:
+    """Answer from verified DB context when the model is rate-limited."""
+    message = user_message.lower()
+    ticket_id = context["id"]
+    status = str(context["status"]).replace("_", " ")
+
+    if _is_greeting(user_message):
+        return f"Hi! I can help with ticket #{ticket_id}. What would you like to know about the repair?"
+
+    if any(word in message for word in ("status", "stage", "progress", "where")):
+        return f"Ticket #{ticket_id} is currently {status}."
+
+    if any(word in message for word in ("log", "update", "note", "happen", "done")):
+        if context["logs"]:
+            latest = context["logs"][0]
+            return f"The latest technician update says: {latest['note']}"
+        return "I don't have a technician update for this ticket yet."
+
+    return (
+        f"I can help with ticket #{ticket_id}. Its current status is {status}; "
+        "ask me about the latest technician update or repair status."
+    )
+
 TOOLS = [
     {
         "type": "function",
@@ -161,7 +194,16 @@ def _request_mistral(payload: dict[str, Any], stream: bool = False):
         },
         method="POST",
     )
-    return urllib.request.urlopen(request, timeout=60)
+    try:
+        return urllib.request.urlopen(request, timeout=60)
+    except urllib.error.HTTPError as exc:
+        if exc.code == 429:
+            retry_after = exc.headers.get("Retry-After")
+            suffix = f" Try again in about {retry_after} seconds." if retry_after else " Please try again shortly."
+            raise MistralRateLimitError(
+                f"The repair assistant is busy right now.{suffix}"
+            ) from exc
+        raise
 
 
 def _message_content(message: dict[str, Any]) -> str:
@@ -212,6 +254,8 @@ def _stream_final_response(payload: dict[str, Any]) -> Iterator[str]:
                     yield _sse(content=content)
 
         yield "data: [DONE]\n\n"
+    except MistralRateLimitError:
+        raise
     except (urllib.error.HTTPError, urllib.error.URLError, RuntimeError, ValueError) as exc:
         yield _sse(error=f"The repair assistant is temporarily unavailable: {exc}")
         yield "data: [DONE]\n\n"
@@ -228,6 +272,10 @@ def chat_stream(ticket_id: int | None, user_message: str) -> Iterable[str]:
             f"I couldn't find ticket #{ticket_id}. That ticket ID is invalid or not found. "
             "Please check the number on your receipt and try again."
         )
+        return
+
+    if _is_greeting(user_message):
+        yield from _direct_stream(_fallback_response(context, user_message))
         return
 
     messages: list[dict[str, Any]] = [
@@ -277,6 +325,8 @@ def chat_stream(ticket_id: int | None, user_message: str) -> Iterable[str]:
             "max_tokens": 300,
         }
         yield from _stream_final_response(final_payload)
+    except MistralRateLimitError:
+        yield from _direct_stream(_fallback_response(context, user_message))
     except (urllib.error.HTTPError, urllib.error.URLError, RuntimeError, KeyError, IndexError, ValueError) as exc:
         yield _sse(error=f"The repair assistant is temporarily unavailable: {exc}")
         yield "data: [DONE]\n\n"
